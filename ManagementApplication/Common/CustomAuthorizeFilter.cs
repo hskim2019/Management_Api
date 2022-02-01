@@ -8,7 +8,7 @@ using System.Net;
 
 namespace ManagementApplication.Common
 {
-    public class CustomAuthorizeFilter : ActionFilterAttribute, IAsyncAuthorizationFilter, IAsyncAlwaysRunResultFilter
+    public class CustomAuthorizeFilter : ActionFilterAttribute, IAsyncAuthorizationFilter
     {
 
         public AuthorizationPolicy Policy { get; }
@@ -18,6 +18,7 @@ namespace ManagementApplication.Common
             Policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
         }
 
+        // Called early in the filter pipeline to confirm request is authorized.
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             if (context == null)
@@ -40,6 +41,7 @@ namespace ManagementApplication.Common
             //    return;
             //}
 
+
             var policyEvaluator = context.HttpContext.RequestServices.GetRequiredService<IPolicyEvaluator>();
             var authenticateResult = await policyEvaluator.AuthenticateAsync(Policy, context.HttpContext);
             var authorizeResult = await policyEvaluator.AuthorizeAsync(Policy, authenticateResult, context.HttpContext, context);
@@ -58,21 +60,22 @@ namespace ManagementApplication.Common
 
         }
 
-        public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
-        {
-            var msg = "";
-            var authorizationResult = context.HttpContext.Features.Get<IAuthorizationResultFeature>()?.AuthorizationResult;
-            if (authorizationResult?.Failure != null)
-            {
-                var rolesRequirements = authorizationResult.Failure.FailedRequirements.OfType<RolesAuthorizationRequirement>();
-                msg = $@"You need to have all following roles (each group requires at least one role): 
-                     {string.Join(", ", rolesRequirements.Select(e => $"({string.Join(", ", e.AllowedRoles)})"))}";
-                //sends back a plain text result containing the msg
-                //this can be obtained by the client
-                context.Result = new ContentResult { Content = msg, StatusCode = 403 };
-            }
-            await next();
-        }
+        // action 실행 이전 비동기 실행, 필터 적용 후 호출 (only executed for successful results)
+        //public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        //{
+        //    var msg = "";
+        //    var authorizationResult = context.HttpContext.Features.Get<IAuthorizationResultFeature>()?.AuthorizationResult;
+        //    if (authorizationResult?.Failure != null)
+        //    {
+        //        var rolesRequirements = authorizationResult.Failure.FailedRequirements.OfType<RolesAuthorizationRequirement>();
+        //        msg = $@"You need to have all following roles (each group requires at least one role): 
+        //             {string.Join(", ", rolesRequirements.Select(e => $"({string.Join(", ", e.AllowedRoles)})"))}";
+        //        //sends back a plain text result containing the msg
+        //        //this can be obtained by the client
+        //        context.Result = new ContentResult { Content = msg, StatusCode = 403 };
+        //    }
+        //    await next();
+        //}
 
     }
 

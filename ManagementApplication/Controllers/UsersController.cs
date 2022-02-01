@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using ManagementApplication.Common;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ManagementApplication.Controllers
 {
@@ -152,6 +153,9 @@ namespace ManagementApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] User user)
         {
+            // O365 로그인 페이지로 이동
+            //HttpContext.GetOwinContext().Authentication.Challenge(new AuthenticationProperties { RedirectUri = sRedirectURL },
+            //    OpenIdConnectAuthenticationDefaults.AuthenticationType);
             // 필수 입력값 - UserId, Password
             if (ModelState.IsValid)
             {

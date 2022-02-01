@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
@@ -17,6 +18,7 @@ namespace ManagementApplication.Common
         {
             _httpContextAccessor = httpContextAccessor;
         }
+        //Checks if a user meets a specific set of requirements for the specified resource
         async Task<AuthorizationResult> IAuthorizationService.AuthorizeAsync(ClaimsPrincipal user, object resource, IEnumerable<IAuthorizationRequirement> requirements)
         {
             var result = await base.AuthorizeAsync(user, resource, requirements);
@@ -24,6 +26,7 @@ namespace ManagementApplication.Common
             _setAuthorizationResultFeature(result);
             return result;
         }
+        // Checks if a user meets a specific authorization policy
         async Task<AuthorizationResult> IAuthorizationService.AuthorizeAsync(ClaimsPrincipal user, object resource, string policyName)
         {
             var result = await base.AuthorizeAsync(user, resource, policyName);

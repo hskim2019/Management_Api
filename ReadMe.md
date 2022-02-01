@@ -1,4 +1,8 @@
+## jwt ì¸ì¦ì„ ì ìš©í•œ API êµ¬ì„±í•´ë³´ê¸°
+---
+
 ## memo
+---
 * Built with
 	- Framework : Asp.net core 6.0 (visual studio 2022)
 	- Asp.net core web api
@@ -7,81 +11,91 @@
 	- Microsoft.EntityFrameworkCore.InMemory
 	- Microsoft.AspNetCore.Authentication.JwtBearer
 
+## ì ‘ê·¼ í† í° ë°©ì‹ ì¸ì¦
+---
+* 1. ì‚¬ìš©ì ë¡œê·¸ì¸ -> ì„œë²„ì—ì„œ jwt ì‘ë‹µ(token ìœ íš¨ê¸°ê°„ ì„¤ì •)
+* 2. ë¡œê·¸ì¸ ì œì™¸ API ìš”ì²­ ì‹œ token ì¶”ê°€ -> ì„œë²„ì—ì„œ ìš”ì²­ì— í¬í•¨ ëœ tokenì´ ë³€í™˜ëœ ê²ƒì¸ì§€ ê²€ì¦í•˜ì—¬ ì¸ì¦ ì‹œ ì‘ë‹µ
+
 ## step
-#### ±âº» api ±¸¼º
-* 1) Users ¸ğµ¨ Ãß°¡  
+---
+#### ê¸°ë³¸ api êµ¬ì„±
+* 1) Users ëª¨ë¸ ì¶”ê°€  
 		- Models > User.cs
-		- + DTO ¸ğµ¨
-* 2) DB Context Ãß°¡  
+		- + DTO ëª¨ë¸
+* 2) DB Context ì¶”ê°€  
 		- Models > UserContext
-* 3) DI ÄÁÅ×ÀÌ³Ê¿¡ DB Context µî·Ï & DB Context°¡ ¸Ş¸ğ¸® ³» µ¥ÀÌÅÍº£ÀÌ½º¸¦ »ç¿ëÇÏµµ·Ï ÁöÁ¤  
+* 3) DI ì»¨í…Œì´ë„ˆì— DB Context ë“±ë¡ & DB Contextê°€ ë©”ëª¨ë¦¬ ë‚´ ë°ì´í„°ë² ì´ìŠ¤ë¥¼ ì‚¬ìš©í•˜ë„ë¡ ì§€ì •  
 		- Program.cs
-* 4) Controllers > ApiController »ı¼º  
+* 4) Controllers > ApiController ìƒì„±  
 		- Controllers > UsersController.cs
 
-#### jwt ÀÎÁõ Àû¿ë
-* 5) JWT ÀÎÁõ ½ºÅ°¸¶¸¦ µî·Ï  
+#### jwt ì¸ì¦ ì ìš©
+* 5) JWT ì¸ì¦ ìŠ¤í‚¤ë§ˆë¥¼ ë“±ë¡  
 		- Program.cs
 		- appsettings.json
-* 6) ÀÎÁõÁ¤Ã¥ Ãß°¡  
+* 6) ì¸ì¦ì •ì±… ì¶”ê°€  
 		- Common > Policies.cs
-		- Admin/User ±×·ìÀ¸·Î ±¸ºĞÇÏ¿© ÀÎÁõÃ³¸®
-* 7) ¼­ºñ½º¿¡ ÀÎÁõÁ¤Ã¥ »ç¿ë µî·Ï  
+		- Admin/User ê·¸ë£¹ìœ¼ë¡œ êµ¬ë¶„í•˜ì—¬ ì¸ì¦ì²˜ë¦¬
+* 7) ì„œë¹„ìŠ¤ì— ì¸ì¦ì •ì±… ì‚¬ìš© ë“±ë¡  
 		- Program.cs
-* 8) Login API¿¡ jwt ÀÎÁõ Àû¿ë  
+* 8) Login APIì— jwt ì¸ì¦ ì ìš©  
 		- UserController.cs > Login & GenerateJWTToken
-* 9) ÀÎÁõÀÌ ÇÊ¿äÇÑ ÄÁÆ®·Ñ·¯¿¡ [Authorize] Æ¯¼º Ãß°¡  
+* 9) ì¸ì¦ì´ í•„ìš”í•œ ì»¨íŠ¸ë¡¤ëŸ¬ì— [Authorize] íŠ¹ì„± ì¶”ê°€ (ì¸ì¦ í•„ìš” ì—†ëŠ” action ì— [AllowAnonymous] íŠ¹ì„± ì¶”ê°€)
 
-#### AuthorizeFilter Àû¿ë
-* 10) ÀÎÁõ ÇÊÅÍ
-	- CustomAuthorizeFilter.cs »ı¼º
-	- ÀÍ¸í Á¢±Ù(AllowAnonymous) ¿©ºÎ metadata ·Î È®ÀÎ ÇÒ ¼ö ÀÖÀ½
-	- ******pending... CustomAuthorizeFilter ¿¡¼­ authorizeResult ¸¦ ÅëÇØ¼­ 401 ÄÚµå custom Ã³¸® ¶Ç´Â Program.cs ¿¡¼­ Use¹®¿¡¼­ Ã³¸®, 403 ÄÚµå´Â filter ¸¦ °ÅÄ¡Áö ¾Ê¾Æ¼­ HttpAppAuthorizationService.cs ¿¡¼­ Å×½ºÆ® Áß...
-			- [TEST](https://stackoverflow.com/questions/66662939/where-to-return-403-forbidden-status)
-			- 1) HttpAppAuthorizationService.cs »ı¼º
-			- 2) Program.cs - 1)ÀÇ ¼­ºñ½º µî·Ï
-			- 3) CustomAuthorizeFilter.cs ¿¡ OnResultExecutionAsync ÀçÁ¤ÀÇ
+#### AuthorizeFilter ì ìš©
+* 10) ì¸ì¦ í•„í„°
+	- CustomAuthorizeFilter.cs ìƒì„±
+	- ìµëª… ì ‘ê·¼(AllowAnonymous) ì—¬ë¶€ metadata ë¡œ í™•ì¸ í•  ìˆ˜ ìˆìŒ
+	- ì»¨íŠ¸ë¡¤ëŸ¬ì— AuthorizeFilter(CustomAuthorizeFilter) ì ìš©
+	- ì»¨íŠ¸ë¡¤ëŸ¬ ì‹¤í–‰ ì „ ì‹¤í–‰ í•  ê²ƒì´ ìˆìœ¼ë©´ ì—¬ê¸°ì— ì½”ë“œ ì¶”ê°€ í•˜ê¸°
 
-#### ActionFilter Àû¿ë
-* 11) Action ½ÇÇà Àü, ÈÄ Àû¿ëÇÒ ÇÊÅÍ  
-	- ActionFilter.cs »ı¼º
-	- Programs.cs ¿¡ service µî·Ï
+* 11) ì¸ì¦ ì˜¤ë¥˜ ì²´í¬
+	- HttpAppAuthorizationService.cs ìƒì„±
+	- Program.cs ì— ì„œë¹„ìŠ¤ ë“±ë¡
+	- ìµëª…ì ‘ê·¼ì´ ì•„ë‹Œ filter ë¥¼ ê±°ì¹˜ëŠ” actionì— ëŒ€í•´ì„œ acthorizeResultë¥¼ í†µí•´ì„œ user requirements ê°€ ì¶©ì¡±í•˜ëŠ”ì§€ ì²´í¬ í•  ìˆ˜ ìˆìŒ
+	- [ì°¸ì¡°](https://stackoverflow.com/questions/66662939/where-to-return-403-forbidden-status)
 
-* 100)¼¼¼Ç test
+* 12) ì¸ì¦ ì˜¤ë¥˜ ì²˜ë¦¬
+	- Program.cs
+
+#### ActionFilter ì ìš©
+* 13) Action ì‹¤í–‰ ì „, í›„ ì ìš©í•  í•„í„°  
+	- ActionFilter.cs ìƒì„±
+	- Programs.cs ì— service ë“±ë¡
+
+* pending...100)ì„¸ì…˜ test
 
 
-
-## Á¢±Ù ÅäÅ« ¹æ½Ä ÀÎÁõ
-* 1. »ç¿ëÀÚ ·Î±×ÀÎ -> ¼­¹ö¿¡¼­ jwt ÀÀ´ä(token À¯È¿±â°£ ¼³Á¤)
-* 2. ·Î±×ÀÎ Á¦¿Ü API ¿äÃ» ½Ã token Ãß°¡ -> ¼­¹ö¿¡¼­ ¿äÃ»¿¡ Æ÷ÇÔ µÈ tokenÀÌ º¯È¯µÈ °ÍÀÎÁö °ËÁõÇÏ¿© ÀÎÁõ ½Ã ÀÀ´ä
-
-## API ¹®¼­È­ 
+## API ë¬¸ì„œí™”
+--- 
 https://localhost:7084/swagger
 
-- È¸¿ø°¡ÀÔ : POST /users
-- ·Î±×ÀÎ : POST /users/login
-- È¸¿øÁ¶È¸(ÀüÃ¼) : GET /users
+- íšŒì›ê°€ì… : POST /users
+- ë¡œê·¸ì¸ : POST /users/login
+- íšŒì›ì¡°íšŒ(ì „ì²´) : GET /users
 
-- È¸¿øÁ¶È¸(ÀüÃ¼_°ü¸®ÀÚ) : GET /users/all
-- È¸¿øÁ¶È¸(»ó¼¼) : GET /users/:UserIdx
-- È¸¿øÁ¤º¸¼öÁ¤: PUT /users
-- È¸¿øÅ»Åğ : DELETE /users
+- íšŒì›ì¡°íšŒ(ì „ì²´_ê´€ë¦¬ì) : GET /users/all
+- íšŒì›ì¡°íšŒ(ìƒì„¸) : GET /users/:UserIdx
+- íšŒì›ì •ë³´ìˆ˜ì •: PUT /users
+- íšŒì›íƒˆí‡´ : DELETE /users
 
 #### memo
-* IAllowAnonymousFilter °¡ core 3.0 ÀÌ»ó¿¡¼­´Â not working ÀÎ °Í °°¾Æ¼­ metadata ·Î ÀÍ¸í Á¢±Ù È®ÀÎÇÏµµ·Ï ¼öÁ¤  
-	- [ÂüÁ¶_link](https://stackoverflow.com/questions/59305183/allowanonymous-attribute-is-not-working-in-net-core-api-2-2-please-consider)
-	- [ÂüÁ¶_link](https://stackoverflow.com/questions/60523559/check-whether-the-allow-anonymous-is-on-or-not-in-asp-net-core)
+---
+* IAllowAnonymousFilter ê°€ core 3.0 ì´ìƒì—ì„œëŠ” not working ì¸ ê²ƒ ê°™ì•„ì„œ metadata ë¡œ ìµëª… ì ‘ê·¼ í™•ì¸í•˜ë„ë¡ ìˆ˜ì •  
+	- [ì°¸ì¡°_link](https://stackoverflow.com/questions/59305183/allowanonymous-attribute-is-not-working-in-net-core-api-2-2-please-consider)
+	- [ì°¸ì¡°_link](https://stackoverflow.com/questions/60523559/check-whether-the-allow-anonymous-is-on-or-not-in-asp-net-core)
 
 
 ---
 ## Reference link
 ---
-[ÂüÁ¶link(msdn)](https://docs.microsoft.com/ko-kr/aspnet/core/tutorials/first-web-api?view=aspnetcore-6.0&tabs=visual-studio)
-[ÂüÁ¶link_API±¸¼º](https://velog.io/@mygumi22/.NET-Core-3.1-Web-API-%EB%A7%8C%EB%93%A4%EA%B8%B0#orm-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
-[ÂüÁ¶link_API±¸¼º](https://blog.naver.com/PostView.naver?blogId=okcharles&logNo=222138969070&categoryNo=18&parentCategoryNo=0&viewDate=&currentPage=2&postListTopCurrentPage=1&from=postView&userTopListOpen=true&userTopListCount=5&userTopListManageOpen=false&userTopListCurrentPage=2)
+[ì°¸ì¡°link(msdn)](https://docs.microsoft.com/ko-kr/aspnet/core/tutorials/first-web-api?view=aspnetcore-6.0&tabs=visual-studio)  
+[ì°¸ì¡°link_APIêµ¬ì„±](https://velog.io/@mygumi22/.NET-Core-3.1-Web-API-%EB%A7%8C%EB%93%A4%EA%B8%B0#orm-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)  
+[ì°¸ì¡°link_APIêµ¬ì„±](https://blog.naver.com/PostView.naver?blogId=okcharles&logNo=222138969070&categoryNo=18&parentCategoryNo=0&viewDate=&currentPage=2&postListTopCurrentPage=1&from=postView&userTopListOpen=true&userTopListCount=5&userTopListManageOpen=false&userTopListCurrentPage=2)  
 
-[ÂüÁ¶link_jwtÀÎÁõ(msdn)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-6.0)
-[ÂüÁ¶link_jwtÀÎÁõ](https://lab.cliel.com/entry/ASPNET-Core-Web-API-JWT-%EC%9D%B8%EC%A6%9D)
-[ÂüÁ¶link_jwtÀÎÁõ](https://jasonwatmore.com/post/2021/12/14/net-6-jwt-authentication-tutorial-with-example-api)
+[ì°¸ì¡°link_jwtì¸ì¦(msdn)](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/?view=aspnetcore-6.0)  
+[ì°¸ì¡°link_jwtì¸ì¦](https://lab.cliel.com/entry/ASPNET-Core-Web-API-JWT-%EC%9D%B8%EC%A6%9D)  
+[ì°¸ì¡°link_jwtì¸ì¦](https://jasonwatmore.com/post/2021/12/14/net-6-jwt-authentication-tutorial-with-example-api)  
 
-[ÂüÁ¶link_authorizefilter](https://referbruv.com/blog/posts/building-custom-responses-for-unauthorized-requests-in-aspnet-core)
+[ì°¸ì¡°link_authorizefilter](https://referbruv.com/blog/posts/building-custom-responses-for-unauthorized-requests-in-aspnet-core)  
+[ì°¸ì¡°link_authorizecheck](https://stackoverflow.com/questions/66662939/where-to-return-403-forbidden-status)

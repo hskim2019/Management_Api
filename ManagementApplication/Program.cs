@@ -3,12 +3,9 @@ using ManagementApplication.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
-using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +38,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 
 });
 
+
 // [7] 서비스에 인증정책 사용 등록
 builder.Services.AddAuthorization(config =>
 {
@@ -55,12 +53,11 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(100);//Session Timeout.
 });
 
-// [TEST]
-//builder.Services.AddSingleton<IAsyncAuthorizationFilter, CustomAuthorizeFilter>();   services.AddHttpContextAccessor();
-// [TEST] [10]-2 : custom handing 403 code 
+// [11] : 인증오류 체크(Checks if a user meets a specific set of requirements and policies)
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // IHttpContextAccessor is no longer wired up by default, have to register first
 builder.Services.AddSingleton<IAuthorizationService, HttpAppAuthorizationService>();
-// [11] 액션 호출 될 때 마다 적용 할 것
+
+// [13] 액션 호출 될 때 마다 적용 할 것
 builder.Services.AddControllers(option => { option.Filters.Add<ActionFilter>(); });
 
 var app = builder.Build();
@@ -77,16 +74,25 @@ if (app.Environment.IsDevelopment())
 
 }
 
-// [10]-1
+// [12] 인증 오류 처리
 app.Use(async (context, next) =>
 {
     await next();
 
-    if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+    if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized) // 401
     {
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync("Request Access Denied" + HttpStatusCode.Unauthorized.ToString());
+    }
+
+    if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden) // 403
+    {
+        context.Response.ContentType = "application/json";
+
         await context.Response.WriteAsync("Request Access Denied" + HttpStatusCode.Unauthorized.ToString());
     }
 });
+
 
 
 app.UseHttpsRedirection();
