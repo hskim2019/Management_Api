@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ErrorHandling.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc;
@@ -41,22 +42,26 @@ namespace ManagementApplication.Common
             //    return;
             //}
 
+            //if (context.HttpContext.Session.GetInt32("USER_LOGIN_KEY") == null)
+            //{
+            //    throw new HttpException((int)HttpStatusCode.Unauthorized, "redirect to login page");
+            //}
 
             var policyEvaluator = context.HttpContext.RequestServices.GetRequiredService<IPolicyEvaluator>();
             var authenticateResult = await policyEvaluator.AuthenticateAsync(Policy, context.HttpContext);
             var authorizeResult = await policyEvaluator.AuthorizeAsync(Policy, authenticateResult, context.HttpContext, context);
 
-            if (authorizeResult.Challenged)
-            {
-                // Return custom 401 result
-                context.Result = new JsonResult(new
-                {
-                    Message = "Token Validation Has Failed. Request Access Denied"
-                })
-                {
-                    StatusCode = StatusCodes.Status401Unauthorized
-                };
-            }
+            //if (authorizeResult.Challenged)
+            //{
+            //    // Return custom 401 result
+            //    context.Result = new JsonResult(new
+            //    {
+            //        Message = "Token Validation Has Failed. Request Access Denied"
+            //    })
+            //    {
+            //        StatusCode = StatusCodes.Status401Unauthorized
+            //    };
+            //}
 
         }
 

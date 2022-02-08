@@ -6,18 +6,21 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
+using ErrorHandling.Api.Extensions;
+//using Management_Api.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // [3]-1 DI 컨테이너에 DB Context등록 & 데이터베이스 컨텍스트가 메모리 내 데이터베이스를 사용하도록 지정
-builder.Services.AddDbContext<UserContext>(opt => opt.UseInMemoryDatabase("Management"));
+builder.Services.AddDbContext<ManagementContext>(opt => opt.UseInMemoryDatabase("Management"));
 
 // [5]-1 JWT 인증 스키마 등록 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -58,9 +61,19 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // I
 builder.Services.AddSingleton<IAuthorizationService, HttpAppAuthorizationService>();
 
 // [13] 액션 호출 될 때 마다 적용 할 것
-builder.Services.AddControllers(option => { option.Filters.Add<ActionFilter>(); });
+builder.Services.AddControllers(option => 
+{ 
+    option.Filters.Add<ActionFilter>(); 
+});
+
 
 var app = builder.Build();
+
+// [14] - ExceptionHandler
+app.UseNativeGlobalExceptionHandler();
+
+app.UseHttpsRedirection();
+app.UseRouting();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -68,11 +81,11 @@ if (app.Environment.IsDevelopment())
     // [3]-2 UseDeveloperExceptionPage
     //         개발 환경에서만 활성화 해야 함
     //         파이프라인에서 동기 및 비동기 예외 인스턴스를 캡처하고 HTML 오류 응답을 생성
-    app.UseDeveloperExceptionPage();
+    //app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
+} 
 
-}
 
 // [12] 인증 오류 처리
 app.Use(async (context, next) =>
@@ -82,20 +95,16 @@ app.Use(async (context, next) =>
     if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized) // 401
     {
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("Request Access Denied" + HttpStatusCode.Unauthorized.ToString());
+        await context.Response.WriteAsync("Request Access Denied " + HttpStatusCode.Unauthorized.ToString());
     }
 
     if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden) // 403
     {
         context.Response.ContentType = "application/json";
 
-        await context.Response.WriteAsync("Request Access Denied" + HttpStatusCode.Unauthorized.ToString());
+        await context.Response.WriteAsync("Request Access Denied " + HttpStatusCode.Unauthorized.ToString());
     }
 });
-
-
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 // [5]-2 JWT 인증 스키마 등록 
@@ -103,6 +112,10 @@ app.UseAuthorization();
 // [100]-2 세션 미들웨어 사용 등록
 app.UseSession();
 
-app.MapControllers();
+//app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();

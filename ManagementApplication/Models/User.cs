@@ -6,10 +6,14 @@ namespace ManagementApplication.Models
     public class User
     {
         [Key]
-        public int UserIdx { get; set; }
+        public int UserNo { get; set; }
+        //[Required]
         public string UserId { get; set; }
+        //[Required]
         public string? UserName { get; set; }
+        //[Required]
         public string Password { get; set; }
+        //[Required]
         public string? UserRole { get; set; }
     }
 }
