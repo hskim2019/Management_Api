@@ -167,6 +167,17 @@
 
 	`curl -v -d "{\"userid\":\"hskim01\",\"password\":\"1234\"}" -H "Content-Type:application/json" https://localhost:7084/api/Users/login`
 
+	```
+	User-Agent: Fiddler
+    Host: localhost:7084
+    Content-Length: 36
+    Content-Type: application/json
+    
+	Request Body => {"UserId":"hong", "Password":"1234"}
+	```
+
+
+
 ### 회원 상세 조회
 ----
   관리자 또는 해당 유저만 조회 가능
@@ -211,6 +222,11 @@
 * **Sample:**
 
 	`curl -v -H "Authorization: Bearer {jwt_token_value}" https://localhost:7084/api/Users/3`
+    
+	`User-Agent: Fiddler
+     Authorization: Bearer {auth token}}
+     Content-Length: 36
+	`
 
 #### memo
 ---

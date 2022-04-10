@@ -9,7 +9,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using ErrorHandling.Api.Extensions;
-//using Management_Api.Common;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,7 +84,7 @@ if (app.Environment.IsDevelopment())
     //app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
-} 
+}
 
 
 // [12] 인증 오류 처리
@@ -95,14 +95,14 @@ app.Use(async (context, next) =>
     if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized) // 401
     {
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync("Request Access Denied " + HttpStatusCode.Unauthorized.ToString());
+        await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = "Access Denied" }));
+        //await context.Response.WriteAsync("Request Access Denied " + HttpStatusCode.Unauthorized.ToString());
     }
 
     if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden) // 403
     {
         context.Response.ContentType = "application/json";
-
-        await context.Response.WriteAsync("Request Access Denied " + HttpStatusCode.Unauthorized.ToString());
+        await context.Response.WriteAsync(JsonSerializer.Serialize(new { Message = "Access Denied" }));
     }
 });
 

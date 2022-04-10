@@ -102,7 +102,7 @@ namespace ManagementApplication.Controllers
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized(new { Message = "Access Denied"});
             }
         }
 
@@ -134,7 +134,7 @@ namespace ManagementApplication.Controllers
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized(new { Message = "Access Denied" });
             }
 
         }
